@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Stock Take App</string>
+    <string name="melcom_now">Melcom Now</string>
+    <string name="click">Click</string>
+    <string name="name">Name</string>
+    <string name="zone">Zone</string>
+    <string name="type_zone_here">type zone here</string>
+    <string name="type_name_here">Type name here</string>
+    <string name="exit">EXIT</string>
+    <string name="log_in">LOG IN</string>
+    <string name="settings">SETTINGS</string>
+    <string name="scan">SCAN</string>
+    <string name="c">C</string>
+    <string name="save">SAVE</string>
+    <string name="view">VIEW</string>
+    <string name="stock_take_app_title">Stock Take App</string>
+    <string name="ip">10.10.0.21</string>
+    <string name="back">BACK</string>
+    <string name="exits">EXIT APP</string>
+    <string name="security_pin">Enter your pin</string>
+    <string name="pin">PIN</string>
+    <string name="confirm">CONFIRM</string>
+</resources>
