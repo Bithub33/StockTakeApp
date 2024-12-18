@@ -1,0 +1,68 @@
+package com.example.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+public class IPActivity extends AppCompatActivity {
+
+    EditText ips;
+    Button set;
+    Toolbar toolbar;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ipactivity);
+
+        ips = findViewById(R.id.ip);
+        set = findViewById(R.id.set);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Settings");
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        SharedPreferences prefs = getSharedPreferences("IP", MODE_PRIVATE);
+        String ip = prefs.getString("ip","");
+        if (!ip.isEmpty())
+        {
+            ips.setText(ip);
+        }
+        SharedPreferences.Editor edit = prefs.edit();
+
+        set.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String ip = ips.getText().toString();
+                if (!TextUtils.isEmpty(ip))
+                {
+                    edit.putString("ip",ip);
+                    edit.commit();
+                    onBackPressed();
+                }else{
+
+                    Toast.makeText(IPActivity.this, "Empty field is required",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+}

@@ -1,24 +1,30 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     String item_name, item_code, item_qty;
+    List<Model> list;
+    Context context;
 
 
-    public SaveAdapter(String item_name,String item_code, String item_qty){
+    public SaveAdapter(List<Model> list, Context context){
 
-        this.item_name = item_name;
-        this.item_code = item_code;
-        this.item_qty = item_qty;
+        this.list = list;
+        this.context = context;
 
     }
 
@@ -51,10 +57,19 @@ public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
+        viewHolder holder1 = (viewHolder) holder;
+        //filter.addAll(list);
+        Model model = list.get(position);
+        holder1.lay.setVisibility(View.VISIBLE);
+
+        holder1.name.setText(model.getName());
+        holder1.code.setText(model.getItem_code());
+        holder1.qty.setText(model.getQty());
+
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
     }
 }

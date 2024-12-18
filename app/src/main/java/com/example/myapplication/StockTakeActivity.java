@@ -1,9 +1,13 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,19 +21,26 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Objects;
+
 public class StockTakeActivity extends AppCompatActivity {
 
-    String name,zone,ip,item_val;
+    String name,zone,ip,item_val,i_code,i_name,i_barcode,shop_code,qtys;
     EditText item,qty;
     Button scan,clear,save,view,back,exit;
     TextView t_name,t_zone,t_ip,item_code,item_name,item_num;
-    LinearLayout inp;
+    LinearLayout inp,item_lay;
+    RequestQueue requestQueue,req;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +50,8 @@ public class StockTakeActivity extends AppCompatActivity {
         name = getIntent().getStringExtra("name");
         zone = getIntent().getStringExtra("zone");
         ip = getIntent().getStringExtra("ip");
+        requestQueue = Volley.newRequestQueue(StockTakeActivity.this);
+        req = Volley.newRequestQueue(this);
 
         Initialize();
 
@@ -51,6 +64,8 @@ public class StockTakeActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(StockTakeActivity.this, SaveActivity.class);
+                intent.putExtra("name",name);
+                intent.putExtra("zone",zone);
                 startActivity(intent);
 
             }
@@ -89,6 +104,27 @@ public class StockTakeActivity extends AppCompatActivity {
             }
         });
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                qtys = qty.getText().toString();
+                if (!TextUtils.isEmpty(qtys))
+                {
+                    if(!(Double.parseDouble(qtys) > 6)){
+                        saveData();
+                    }else{
+                        Toast.makeText(StockTakeActivity.this, "Quantity should not exceed 6",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                }else{
+                    Toast.makeText(StockTakeActivity.this, "please add quantity",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+
 
     }
 
@@ -104,6 +140,7 @@ public class StockTakeActivity extends AppCompatActivity {
         back = findViewById(R.id.back);
         exit = findViewById(R.id.exit);
         inp = findViewById(R.id.inp);
+        item_lay = findViewById(R.id.item_lay);
         item_code = findViewById(R.id.item_code);
         item_name = findViewById(R.id.item_name);
         item_num =findViewById(R.id.item_num);
@@ -111,6 +148,11 @@ public class StockTakeActivity extends AppCompatActivity {
         t_name = findViewById(R.id.name);
         t_zone = findViewById(R.id.zone);
         t_ip = findViewById(R.id.ip);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Stock Take Screen");
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
     }
 
@@ -121,43 +163,103 @@ public class StockTakeActivity extends AppCompatActivity {
 
     private void getData(String item_val){
 
-        String url = "http://10.10.0.180:8080/audit/shop_audit.php?item_code="+item_val;
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url,
+        String url = getServerIp()+"/shop_audit.php?item_code="+item_val;
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url,
                 null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
-                for (int i = 0; i < response.length(); i++) {
+                try {
 
-                    try {
+                    for (int i = 0; i < response.length(); i++) {
+
                         JSONObject jsonObject = response.getJSONObject(i);
-                        String i_code = jsonObject.getString("ITEM_CODE");
-                        String i_barcode = jsonObject.getString("BARCODE");
-                        String i_name = jsonObject.getString("ITEM_NAME");
+                        i_code = jsonObject.getString("ITEM_CODE");
+                        i_barcode = jsonObject.getString("BARCODE");
+                        i_name = jsonObject.getString("ITEM_NAME");
+                        shop_code = jsonObject.getString("SHOP_CODE");
+
                         //String item_code = jsonObject.getString("ITEM_CODE");
-                        inp.setVisibility(View.VISIBLE);
+                        item_lay.setVisibility(View.VISIBLE);
                         item_code.setText(i_code);
                         item_name.setText(i_name);
                         item_num.setText(i_barcode);
 
-                    } catch (JSONException e) {
-                        //throw new RuntimeException(e);
-                        Toast.makeText(StockTakeActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
                     }
 
+                } catch (JSONException e) {
+                    //throw new RuntimeException(e);
+                    Toast.makeText(StockTakeActivity.this, "2"+e.toString(),
+                            Toast.LENGTH_SHORT).show();
                 }
 
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(StockTakeActivity.this, error.toString(),
+                Toast.makeText(StockTakeActivity.this,error.getMessage(),
                         Toast.LENGTH_SHORT).show();
+                Log.d("Volley error:", String.valueOf(error));
+
             }
         });
 
+        jsonArrayRequest.setTag("reqTag");
         requestQueue.add(jsonArrayRequest);
 
     }
+
+    private void saveData(){
+
+        String url = getServerIp()+"upload_audit_shop.php?shop_code="+shop_code+
+                "&item_code="+i_code+"&qty="+qtys+"&user="+name+"&ip="+ip+"&rack="+zone;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET,url,
+                new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                Log.d("volleyError", response);
+                Toast.makeText(StockTakeActivity.this, "Stock saved successfully",
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(StockTakeActivity.this,error.getMessage(),
+                        Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        stringRequest.setTag("saveTag");
+        req.add(stringRequest);
+
+    }
+
+    private String getServerIp(){
+
+        SharedPreferences prefs = getSharedPreferences("IP", MODE_PRIVATE);
+        String ip = prefs.getString("ip","");
+        String s_ip = "http://"+ip+":8080/audit/";
+        return s_ip;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(requestQueue != null)
+        {
+            requestQueue.cancelAll("reqTag");
+        }
+
+        if(req != null)
+        {
+            req.cancelAll("saveTag");
+        }
+    }
+
 }

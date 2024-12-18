@@ -4,8 +4,8 @@
     <string name="click">Click</string>
     <string name="name">Name</string>
     <string name="zone">Zone</string>
-    <string name="type_zone_here">type zone here</string>
-    <string name="type_name_here">Type name here</string>
+    <string name="type_zone_here">Type here</string>
+    <string name="type_name_here">Type here</string>
     <string name="exit">EXIT</string>
     <string name="log_in">LOG IN</string>
     <string name="settings">SETTINGS</string>
@@ -20,4 +20,5 @@
     <string name="security_pin">Enter your pin</string>
     <string name="pin">PIN</string>
     <string name="confirm">CONFIRM</string>
+    <string name="search">Search</string>
 </resources>
