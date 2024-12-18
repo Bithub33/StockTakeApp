@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,13 +36,16 @@ import java.util.Objects;
 
 public class StockTakeActivity extends AppCompatActivity {
 
-    String name,zone,ip,item_val,i_code,i_name,i_barcode,shop_code,qtys;
+    String name,zone,ip,item_val,i_code,i_name,i_barcode,shop_code,
+            qtys,store_code,price,dept;
     EditText item,qty;
     Button scan,clear,save,view,back,exit;
-    TextView t_name,t_zone,t_ip,item_code,item_name,item_num;
+    TextView t_name,t_zone,t_ip,item_code,item_name,item_num,t_store_code,
+    t_dept,t_price;
     LinearLayout inp,item_lay;
     RequestQueue requestQueue,req;
     Toolbar toolbar;
+    ProgressBar loadingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +79,17 @@ public class StockTakeActivity extends AppCompatActivity {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 item.setText("");
                 qty.setText("");
+                item_code.setText("");
+                item_name.setText("");
+                item_num.setText("");
+                t_price.setText("");
+                t_dept.setText("");
+                t_store_code.setText("");
+                item_lay.setVisibility(View.GONE);
+
             }
         });
 
@@ -99,8 +113,16 @@ public class StockTakeActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 item_val = item.getText().toString();
-                getData(item_val);
+                item_lay.setVisibility(View.GONE);
 
+                if (!item_val.isEmpty()){
+
+                    getData(item_val);
+
+                }else{
+                    Toast.makeText(StockTakeActivity.this, "Item code is required",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -140,10 +162,14 @@ public class StockTakeActivity extends AppCompatActivity {
         back = findViewById(R.id.back);
         exit = findViewById(R.id.exit);
         inp = findViewById(R.id.inp);
+        loadingBar = findViewById(R.id.loading_bar);
         item_lay = findViewById(R.id.item_lay);
         item_code = findViewById(R.id.item_code);
         item_name = findViewById(R.id.item_name);
         item_num =findViewById(R.id.item_num);
+        t_store_code = findViewById(R.id.store_code);
+        t_dept = findViewById(R.id.cat);
+        t_price = findViewById(R.id.item_price);
 
         t_name = findViewById(R.id.name);
         t_zone = findViewById(R.id.zone);
@@ -164,6 +190,7 @@ public class StockTakeActivity extends AppCompatActivity {
     private void getData(String item_val){
 
         String url = getServerIp()+"/shop_audit.php?item_code="+item_val;
+        loadingBar.setVisibility(View.VISIBLE);
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,url,
                 null, new Response.Listener<JSONArray>() {
@@ -179,18 +206,27 @@ public class StockTakeActivity extends AppCompatActivity {
                         i_barcode = jsonObject.getString("BARCODE");
                         i_name = jsonObject.getString("ITEM_NAME");
                         shop_code = jsonObject.getString("SHOP_CODE");
+                        price = jsonObject.getString("PRICE");
+                        dept = jsonObject.getString("DEPT");
+                        shop_code = jsonObject.getString("SHOP_CODE");
 
                         //String item_code = jsonObject.getString("ITEM_CODE");
                         item_lay.setVisibility(View.VISIBLE);
                         item_code.setText(i_code);
                         item_name.setText(i_name);
                         item_num.setText(i_barcode);
+                        t_price.setText(price);
+                        t_dept.setText(dept);
+                        t_store_code.setText(shop_code);
+
+                        loadingBar.setVisibility(View.GONE);
+                        item_lay.setVisibility(View.VISIBLE);
 
                     }
 
                 } catch (JSONException e) {
-                    //throw new RuntimeException(e);
-                    Toast.makeText(StockTakeActivity.this, "2"+e.toString(),
+                    loadingBar.setVisibility(View.GONE);
+                    Toast.makeText(StockTakeActivity.this, e.toString(),
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -198,6 +234,7 @@ public class StockTakeActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                loadingBar.setVisibility(View.GONE);
                 Toast.makeText(StockTakeActivity.this,error.getMessage(),
                         Toast.LENGTH_SHORT).show();
                 Log.d("Volley error:", String.valueOf(error));
@@ -223,6 +260,16 @@ public class StockTakeActivity extends AppCompatActivity {
                 Log.d("volleyError", response);
                 Toast.makeText(StockTakeActivity.this, "Stock saved successfully",
                         Toast.LENGTH_SHORT).show();
+
+                item.setText("");
+                qty.setText("");
+                item_code.setText("");
+                item_name.setText("");
+                item_num.setText("");
+                t_price.setText("");
+                t_dept.setText("");
+                t_store_code.setText("");
+                item_lay.setVisibility(View.GONE);
 
             }
         }, new Response.ErrorListener() {

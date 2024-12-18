@@ -26,6 +26,7 @@
             android:id="@+id/search"
             android:padding="10dp"
             android:inputType="text"
+            android:drawableEnd="@drawable/search"
             android:textColor="@color/white"
             android:imeOptions="actionSearch"
             android:textColorHint="#ACA8A8"/>

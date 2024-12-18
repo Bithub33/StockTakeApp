@@ -6,12 +6,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
@@ -41,6 +43,7 @@ public class SaveActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     EditText searchView;
     Toolbar toolbar;
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,20 @@ public class SaveActivity extends AppCompatActivity {
                 }
                 return false;
             }
+        });
+
+        searchView.setOnTouchListener((v,event)->{
+            if(event.getAction() == MotionEvent.ACTION_UP){
+                if(event.getRawX() >= (searchView.getRight() -
+                        searchView.getCompoundDrawables()[2].getBounds().width())){
+
+                    search();
+                    return true;
+
+                }
+
+            }
+            return false;
         });
 
     }
@@ -109,7 +126,7 @@ public class SaveActivity extends AppCompatActivity {
 
                 } catch (JSONException e) {
                     //throw new RuntimeException(e);
-                    Toast.makeText(SaveActivity.this, "2"+e.toString(),
+                    Toast.makeText(SaveActivity.this, e.toString(),
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -117,7 +134,7 @@ public class SaveActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SaveActivity.this,"1"+ error.getMessage(),
+                Toast.makeText(SaveActivity.this,error.getMessage(),
                         Toast.LENGTH_SHORT).show();
                 Log.d("Volley error:", String.valueOf(error));
 
@@ -173,7 +190,7 @@ public class SaveActivity extends AppCompatActivity {
 
                     } catch (JSONException e) {
                         //throw new RuntimeException(e);
-                        Toast.makeText(SaveActivity.this, "2"+e.toString(),
+                        Toast.makeText(SaveActivity.this, e.toString(),
                                 Toast.LENGTH_SHORT).show();
                     }
 
@@ -181,7 +198,7 @@ public class SaveActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(SaveActivity.this,"1"+ error.getMessage(),
+                    Toast.makeText(SaveActivity.this, error.getMessage(),
                             Toast.LENGTH_SHORT).show();
                     Log.d("Volley error:", String.valueOf(error));
 

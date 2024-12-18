@@ -11,6 +11,7 @@ import android.net.DhcpInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -32,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     EditText name,zone,pin;
     Button login,exit,next;
-    LinearLayout settings;
-    RelativeLayout rel;
+    RelativeLayout rel,settings;
     ImageView close;
     String s_name,s_zone,ip;
     Toolbar toolbar;
@@ -127,6 +127,10 @@ public class MainActivity extends AppCompatActivity {
 
         name = findViewById(R.id.u_name);
         zone = findViewById(R.id.u_zone);
+        name.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        zone.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+
+
         login = findViewById(R.id.login);
         exit = findViewById(R.id.exit);
         settings = findViewById(R.id.settings);
@@ -160,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
     private String getIp(){
         try{
 
-            WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+            WifiManager wifiManager = (WifiManager) this.getApplicationContext()
+                    .getSystemService(Context.WIFI_SERVICE);
             if (wifiManager != null){
 
                 DhcpInfo dhcpInfo = wifiManager.getDhcpInfo();

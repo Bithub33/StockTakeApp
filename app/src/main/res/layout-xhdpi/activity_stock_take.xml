@@ -76,47 +76,93 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:id="@+id/item_lay"
-            android:visibility="gone"
+            android:layout_marginTop="5dp"
             android:padding="10dp"
             android:layout_below="@+id/inp">
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:id="@+id/item_lay"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km"
+                        android:textColor="@color/white"
+                        android:id="@+id/item_num"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:layout_toStartOf="@+id/store_code"
+                        android:layout_marginEnd="100dp"
+                        android:id="@+id/item_price"
+                        android:text="kjl"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/white"
+                        android:id="@+id/store_code"
+                        android:text=",k"/>
+
+                </RelativeLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:text=""
-                    android:textColor="@color/white"
-                    android:id="@+id/item_num"/>
+                    android:id="@+id/item_name"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#A59724"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textColor="@color/white"
-                    android:id="@+id/item_code"
-                    android:text=""/>
+                    android:layout_marginTop="5dp">
 
-            </RelativeLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="km"
+                        android:textColor="@color/white"
+                        android:id="@+id/cat"/>
 
-            <TextView
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/white"
+                        android:id="@+id/item_code"
+                        android:text=""/>
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:id="@+id/item_name"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#A59724"/>
+                android:id="@+id/loading_bar"
+                android:visibility="gone"
+                android:indeterminate="true"
+                android:layout_centerInParent="true"/>
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
