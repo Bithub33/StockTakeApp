@@ -46,9 +46,18 @@ public class IPActivity extends AppCompatActivity {
                 String ip = ips.getText().toString();
                 if (!TextUtils.isEmpty(ip))
                 {
-                    edit.putString("ip",ip);
-                    edit.commit();
-                    onBackPressed();
+                    if (isValidIp(ip)){
+
+                        edit.putString("ip",ip);
+                        edit.commit();
+                        onBackPressed();
+
+                    }else{
+
+                        Toast.makeText(IPActivity.this, "Please enter a valid ip",
+                                Toast.LENGTH_SHORT).show();
+                    }
+
                 }else{
 
                     Toast.makeText(IPActivity.this, "Empty field is required",
@@ -64,5 +73,17 @@ public class IPActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    private boolean isValidIp(String ip){
+
+        String ipv4 =
+                "^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\."+
+                        "(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\."+
+                        "(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\."+
+                        "(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$";
+
+        return ip.matches(ipv4);
+
     }
 }

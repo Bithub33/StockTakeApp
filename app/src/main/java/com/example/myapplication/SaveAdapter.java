@@ -15,16 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SaveAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private List<Model> list;
 
-    String item_name, item_code, item_qty;
-    List<Model> list;
-    Context context;
-
-
-    public SaveAdapter(List<Model> list, Context context){
+    public SaveAdapter(List<Model> list){
 
         this.list = list;
-        this.context = context;
 
     }
 

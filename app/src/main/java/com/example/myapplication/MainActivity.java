@@ -43,10 +43,47 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(!isTaskRoot()
+                && getIntent().hasCategory(Intent.CATEGORY_LAUNCHER)
+                && getIntent().getAction() != null
+                && getIntent().getAction().equals(Intent.ACTION_MAIN)){
+            finish();
+            return;
+
+        }
         setContentView(R.layout.activity_main);
 
         Initialize();
         ip = prefs.getString("ip","");
+        Actions();
+
+    }
+
+    private void Initialize(){
+
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Melcom Shop Audit");
+
+        name = findViewById(R.id.u_name);
+        zone = findViewById(R.id.u_zone);
+        name.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+        zone.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+
+
+        login = findViewById(R.id.login);
+        exit = findViewById(R.id.exit);
+        settings = findViewById(R.id.settings);
+        rel = findViewById(R.id.pin_lay);
+        close = findViewById(R.id.close);
+        pin = findViewById(R.id.u_pins);
+        next = findViewById(R.id.confirm);
+        prefs = getSharedPreferences("IP", MODE_PRIVATE);
+        edit = prefs.edit();
+
+    }
+
+    private void Actions(){
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +103,8 @@ public class MainActivity extends AppCompatActivity {
         exit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 finishAffinity();
-                 System.exit(0);
+                finishAffinity();
+                System.exit(0);
             }
         });
 
@@ -115,31 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
-    }
-
-    private void Initialize(){
-
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        setTitle("Melcom Shop Audit");
-
-        name = findViewById(R.id.u_name);
-        zone = findViewById(R.id.u_zone);
-        name.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
-        zone.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
-
-
-        login = findViewById(R.id.login);
-        exit = findViewById(R.id.exit);
-        settings = findViewById(R.id.settings);
-        rel = findViewById(R.id.pin_lay);
-        close = findViewById(R.id.close);
-        pin = findViewById(R.id.u_pins);
-        next = findViewById(R.id.confirm);
-        prefs = getSharedPreferences("IP", MODE_PRIVATE);
-        edit = prefs.edit();
 
     }
 

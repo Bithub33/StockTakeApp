@@ -132,7 +132,7 @@ public class StockTakeActivity extends AppCompatActivity {
                 qtys = qty.getText().toString();
                 if (!TextUtils.isEmpty(qtys))
                 {
-                    if(!(Double.parseDouble(qtys) > 6)){
+                    if((Double.parseDouble(qtys) > 0)){
                         saveData();
                     }else{
                         Toast.makeText(StockTakeActivity.this, "Quantity should not exceed 6",
@@ -220,13 +220,27 @@ public class StockTakeActivity extends AppCompatActivity {
                         t_store_code.setText(shop_code);
 
                         loadingBar.setVisibility(View.GONE);
-                        item_lay.setVisibility(View.VISIBLE);
 
+                    }
+
+                    if(response.length() == 0){
+                        loadingBar.setVisibility(View.GONE);
+                        item.setText("");
+                        qty.setText("");
+                        item_code.setText("");
+                        item_name.setText("");
+                        item_num.setText("");
+                        t_price.setText("");
+                        t_dept.setText("");
+                        t_store_code.setText("");
+                        item_lay.setVisibility(View.GONE);
+                        Toast.makeText(StockTakeActivity.this, "Item not found",
+                                Toast.LENGTH_SHORT).show();
                     }
 
                 } catch (JSONException e) {
                     loadingBar.setVisibility(View.GONE);
-                    Toast.makeText(StockTakeActivity.this, e.toString(),
+                    Toast.makeText(StockTakeActivity.this, "There was an error fetching item",
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -235,7 +249,7 @@ public class StockTakeActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 loadingBar.setVisibility(View.GONE);
-                Toast.makeText(StockTakeActivity.this,error.getMessage(),
+                Toast.makeText(StockTakeActivity.this,"Failed to connect to server",
                         Toast.LENGTH_SHORT).show();
                 Log.d("Volley error:", String.valueOf(error));
 
@@ -249,41 +263,49 @@ public class StockTakeActivity extends AppCompatActivity {
 
     private void saveData(){
 
-        String url = getServerIp()+"upload_audit_shop.php?shop_code="+shop_code+
-                "&item_code="+i_code+"&qty="+qtys+"&user="+name+"&ip="+ip+"&rack="+zone;
+        if(item_lay.getVisibility() == View.VISIBLE){
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET,url,
-                new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
+            String url = getServerIp()+"upload_audit_shop.php?shop_code="+shop_code+
+                    "&item_code="+i_code+"&qty="+qtys+"&user="+name+"&ip="+ip+"&rack="+zone;
 
-                Log.d("volleyError", response);
-                Toast.makeText(StockTakeActivity.this, "Stock saved successfully",
-                        Toast.LENGTH_SHORT).show();
+            StringRequest stringRequest = new StringRequest(Request.Method.GET,url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
 
-                item.setText("");
-                qty.setText("");
-                item_code.setText("");
-                item_name.setText("");
-                item_num.setText("");
-                t_price.setText("");
-                t_dept.setText("");
-                t_store_code.setText("");
-                item_lay.setVisibility(View.GONE);
+                            Log.d("volleyError", response);
+                            Toast.makeText(StockTakeActivity.this, "Stock saved successfully",
+                                    Toast.LENGTH_SHORT).show();
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                            item.setText("");
+                            qty.setText("");
+                            item_code.setText("");
+                            item_name.setText("");
+                            item_num.setText("");
+                            t_price.setText("");
+                            t_dept.setText("");
+                            t_store_code.setText("");
+                            item_lay.setVisibility(View.GONE);
 
-                Toast.makeText(StockTakeActivity.this,error.getMessage(),
-                        Toast.LENGTH_SHORT).show();
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-            }
-        });
+                    Toast.makeText(StockTakeActivity.this,"Failed to save item",
+                            Toast.LENGTH_SHORT).show();
 
-        stringRequest.setTag("saveTag");
-        req.add(stringRequest);
+                }
+            });
+
+            stringRequest.setTag("saveTag");
+            req.add(stringRequest);
+
+        }else{
+
+            Toast.makeText(this, "Item undefined", Toast.LENGTH_SHORT).show();
+
+        }
 
     }
 

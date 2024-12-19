@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,13 +37,13 @@ import java.util.List;
 
 public class SaveActivity extends AppCompatActivity {
 
-    RecyclerView rec;
-    List<Model> list = new ArrayList<>();
-    String name,zone;
-    SaveAdapter saveAdapter;
-    RequestQueue requestQueue;
-    EditText searchView;
-    Toolbar toolbar;
+    private TextView msg;
+    private List<Model> list = new ArrayList<>();
+    private String name,zone;
+    private SaveAdapter saveAdapter;
+    private RequestQueue requestQueue;
+    private EditText searchView;
+    private LinearLayout rec_lay;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,13 +85,15 @@ public class SaveActivity extends AppCompatActivity {
 
     private void Initialize(){
 
-        rec = findViewById(R.id.rec);
+        RecyclerView rec = findViewById(R.id.rec);
         searchView = findViewById(R.id.search);
         rec.setLayoutManager(new LinearLayoutManager(this));
-        saveAdapter = new SaveAdapter(list,this);
+        saveAdapter = new SaveAdapter(list);
         rec.setAdapter(saveAdapter);
+        rec_lay = findViewById(R.id.rec_lay);
+        msg = findViewById(R.id.msg);
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Past Entries");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -122,11 +125,22 @@ public class SaveActivity extends AppCompatActivity {
                         list.add(model);
 
                     }
+
+                    if (response.length() != 0){
+
+                        rec_lay.setVisibility(View.VISIBLE);
+                        msg.setVisibility(View.GONE);
+
+                    }else{
+
+                        rec_lay.setVisibility(View.GONE);
+                        msg.setVisibility(View.VISIBLE);
+                    }
+
                     saveAdapter.notifyDataSetChanged();
 
                 } catch (JSONException e) {
-                    //throw new RuntimeException(e);
-                    Toast.makeText(SaveActivity.this, e.toString(),
+                    Toast.makeText(SaveActivity.this, "Failed to fetch saved items",
                             Toast.LENGTH_SHORT).show();
                 }
 
@@ -134,7 +148,7 @@ public class SaveActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(SaveActivity.this,error.getMessage(),
+                Toast.makeText(SaveActivity.this, "Failed to fetch saved items",
                         Toast.LENGTH_SHORT).show();
                 Log.d("Volley error:", String.valueOf(error));
 
@@ -186,11 +200,21 @@ public class SaveActivity extends AppCompatActivity {
                             }
 
                         }
+
+                        if (response.length() != 0){
+
+                            rec_lay.setVisibility(View.VISIBLE);
+                            msg.setVisibility(View.GONE);
+
+                        }else{
+
+                            rec_lay.setVisibility(View.GONE);
+                            msg.setVisibility(View.VISIBLE);
+                        }
                         saveAdapter.notifyDataSetChanged();
 
                     } catch (JSONException e) {
-                        //throw new RuntimeException(e);
-                        Toast.makeText(SaveActivity.this, e.toString(),
+                        Toast.makeText(SaveActivity.this, "Failed to fetch item",
                                 Toast.LENGTH_SHORT).show();
                     }
 
@@ -198,8 +222,10 @@ public class SaveActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(SaveActivity.this, error.getMessage(),
+                    Toast.makeText(SaveActivity.this, "Failed to fetch item",
                             Toast.LENGTH_SHORT).show();
+                    rec_lay.setVisibility(View.GONE);
+                    msg.setVisibility(View.VISIBLE);
                     Log.d("Volley error:", String.valueOf(error));
 
                 }
