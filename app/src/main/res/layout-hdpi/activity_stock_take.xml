@@ -183,7 +183,7 @@
                 android:maxLength="6"
                 android:textColorHint="#ACA8A8"
                 android:background="@drawable/edit_backg"
-                android:inputType="numberDecimal"/>
+                android:inputType="numberDecimal|numberSigned"/>
 
             <Button
                 android:layout_width="match_parent"

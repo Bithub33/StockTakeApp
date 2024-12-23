@@ -13,9 +13,7 @@ import android.widget.Toast;
 
 public class IPActivity extends AppCompatActivity {
 
-    EditText ips;
-    Button set;
-    Toolbar toolbar;
+    private EditText ips;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +21,8 @@ public class IPActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ipactivity);
 
         ips = findViewById(R.id.ip);
-        set = findViewById(R.id.set);
-        toolbar = findViewById(R.id.toolbar);
+        Button set = findViewById(R.id.set);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Settings");
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -66,7 +64,6 @@ public class IPActivity extends AppCompatActivity {
 
             }
         });
-
 
     }
 

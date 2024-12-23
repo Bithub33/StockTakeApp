@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,16 +38,15 @@ import java.util.Objects;
 
 public class StockTakeActivity extends AppCompatActivity {
 
-    String name,zone,ip,item_val,i_code,i_name,i_barcode,shop_code,
+    private String name,zone,ip,item_val,i_code,i_name,i_barcode,shop_code,
             qtys,store_code,price,dept;
-    EditText item,qty;
-    Button scan,clear,save,view,back,exit;
-    TextView t_name,t_zone,t_ip,item_code,item_name,item_num,t_store_code,
+    private EditText item,qty;
+    private Button scan,clear,save,view,back,exit;
+    private TextView t_name,t_zone,t_ip,item_code,item_name,item_num,t_store_code,
     t_dept,t_price;
-    LinearLayout inp,item_lay;
-    RequestQueue requestQueue,req;
-    Toolbar toolbar;
-    ProgressBar loadingBar;
+    private LinearLayout inp,item_lay;
+    private RequestQueue requestQueue,req;
+    private ProgressBar loadingBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,12 +133,7 @@ public class StockTakeActivity extends AppCompatActivity {
                 qtys = qty.getText().toString();
                 if (!TextUtils.isEmpty(qtys))
                 {
-                    if((Double.parseDouble(qtys) > 0)){
-                        saveData();
-                    }else{
-                        Toast.makeText(StockTakeActivity.this, "Quantity should not exceed 6",
-                                Toast.LENGTH_SHORT).show();
-                    }
+                    saveData();
 
                 }else{
                     Toast.makeText(StockTakeActivity.this, "please add quantity",
@@ -174,7 +170,7 @@ public class StockTakeActivity extends AppCompatActivity {
         t_name = findViewById(R.id.name);
         t_zone = findViewById(R.id.zone);
         t_ip = findViewById(R.id.ip);
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Stock Take Screen");
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -292,8 +288,9 @@ public class StockTakeActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
 
-                    Toast.makeText(StockTakeActivity.this,"Failed to save item",
-                            Toast.LENGTH_SHORT).show();
+                    Alert();
+                    //Toast.makeText(StockTakeActivity.this,"Failed to save item",
+                            //Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -329,6 +326,35 @@ public class StockTakeActivity extends AppCompatActivity {
         {
             req.cancelAll("saveTag");
         }
+    }
+
+    private void Alert(){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialog);
+
+        builder.setTitle("Error");
+        builder.setIcon(R.drawable.baseline_error_24);
+        builder.setMessage("Item was not saved successfully");
+        builder.setCancelable(false);
+
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.setPositiveButton("Retry", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                saveData();
+
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
     }
 
 }

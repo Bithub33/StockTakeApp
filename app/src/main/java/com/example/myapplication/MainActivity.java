@@ -31,14 +31,13 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText name,zone,pin;
-    Button login,exit,next;
-    RelativeLayout rel,settings;
-    ImageView close;
-    String s_name,s_zone,ip;
-    Toolbar toolbar;
-    SharedPreferences prefs;
-    SharedPreferences.Editor edit;
+    private EditText name,zone,pin;
+    private Button login,exit,next;
+    private RelativeLayout rel,settings;
+    private ImageView close;
+    private String ip;
+    private SharedPreferences prefs;
+    private SharedPreferences.Editor edit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void Initialize(){
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Melcom Shop Audit");
 
@@ -157,14 +156,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void Execute(){
 
-        s_name = name.getText().toString();
-        s_zone = zone.getText().toString();
+        String s_name = name.getText().toString();
+        String s_zone = zone.getText().toString();
 
         if(!TextUtils.isEmpty(s_name) && !TextUtils.isEmpty(s_zone)){
 
             Intent intent = new Intent(this, StockTakeActivity.class);
-            intent.putExtra("name",s_name);
-            intent.putExtra("zone",s_zone);
+            intent.putExtra("name", s_name);
+            intent.putExtra("zone", s_zone);
             intent.putExtra("ip",getIp());
             startActivity(intent);
             //finish();

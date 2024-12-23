@@ -60,7 +60,8 @@ public class SaveActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH){
 
-                    search();
+                    String query = searchView.getText().toString();
+                    search(query);
                     return true;
                 }
                 return false;
@@ -72,7 +73,8 @@ public class SaveActivity extends AppCompatActivity {
                 if(event.getRawX() >= (searchView.getRight() -
                         searchView.getCompoundDrawables()[2].getBounds().width())){
 
-                    search();
+                    String query = searchView.getText().toString();
+                    search(query);
                     return true;
 
                 }
@@ -168,13 +170,13 @@ public class SaveActivity extends AppCompatActivity {
         return s_ip;
     }
 
-    private void search(){
-        String query = searchView.getText().toString();
+    private void search(String query){
 
         String url = getServerIp()+"/shop_REPORT.php?username="+name.
                 toUpperCase()+"&rack_num="+zone.toUpperCase();
 
         if(!query.isEmpty()){
+
             JsonArrayRequest ja = new JsonArrayRequest(Request.Method.GET,url,
                     null, new Response.Listener<JSONArray>() {
                 @Override
@@ -187,30 +189,29 @@ public class SaveActivity extends AppCompatActivity {
                             JSONObject jsonObject = response.getJSONObject(i);
                             Model model = new Model();
 
-                            if(jsonObject.getString("ITEM_CODE").equals(query) ||
-                                    jsonObject.getString("QTY").equals(query)||
-                                    jsonObject.getString("ITEM_NAME").contains(query)){
+                            String code = jsonObject.getString("ITEM_CODE");
+                            String qty = jsonObject.getString("QTY");
+                            String name = jsonObject.getString("ITEM_NAME");
 
-                                model.setName(jsonObject.getString("ITEM_NAME"));
-                                model.setItem_code(jsonObject.getString("ITEM_CODE"));
-                                model.setQty(jsonObject.getString("QTY"));
+                            if(code.equals(query) || qty.equals(query)|| name.contains(query)){
+
+                                model.setName(name);
+                                model.setItem_code(code);
+                                model.setQty(qty);
 
                                 list.add(model);
+                                rec_lay.setVisibility(View.VISIBLE);
+                                msg.setVisibility(View.GONE);
 
-                            }
+                            }/*else{
+
+                                rec_lay.setVisibility(View.GONE);
+                                msg.setVisibility(View.VISIBLE);
+
+                            }*/
 
                         }
 
-                        if (response.length() != 0){
-
-                            rec_lay.setVisibility(View.VISIBLE);
-                            msg.setVisibility(View.GONE);
-
-                        }else{
-
-                            rec_lay.setVisibility(View.GONE);
-                            msg.setVisibility(View.VISIBLE);
-                        }
                         saveAdapter.notifyDataSetChanged();
 
                     } catch (JSONException e) {
@@ -233,8 +234,11 @@ public class SaveActivity extends AppCompatActivity {
 
             ja.setTag("searchTag");
             requestQueue.add(ja);
+
         }else{
+
             getData();
+
         }
 
     }
